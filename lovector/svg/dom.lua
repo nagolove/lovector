@@ -141,6 +141,8 @@ function DOM.Document.mt.__call(_, source)
 
     local current_parent = self.root
 
+    source = string.gsub(source, "<!.-%->", "")
+
     for tag, closes, name, attributes, empty in source:gmatch("(<(/?)([:A-Z_a-z][:A-Z_a-z0-9%-%.]*)(.-)(/?)>)") do
         closes = closes == "/"
         empty = empty == "/"
