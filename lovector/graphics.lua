@@ -614,6 +614,16 @@ function Graphics:draw(x, y, sx, sy)
 
     if self.script_fn_src ~= self.script then
         self.script_fn_src = self.script
+
+        if not __lastNum then
+            __lastNum = 0
+        end
+        local file = io.open(string.format("script%d.lua", __lastNum), "w")
+        --print(self.script)
+        file:write(self.script)
+        file:close()
+        __lastNum = __lastNum + 1
+        
         self.script_fn = assert(loadstring(self.script_fn_src))
     end
 

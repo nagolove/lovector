@@ -385,16 +385,51 @@ function common.apply_fill_properties(svg, element)
 end
 
 function common.apply_stroke_properties(svg, element)
-    local r, g, b, a = common.color_parse(common.get_attr(element, "stroke", "none"))
+    local opacity, stroke_opacity, stroke_width, stroke_linecap,
+        stroke_linejoin, stroke_miterlimit
+    local r, g, b, a
+    local parsed = false
 
-    if r then
-        local opacity = tonumber(common.get_attr(element, "opacity", "1"), 10)
-        local stroke_opacity = tonumber(common.get_attr(element, "stroke-opacity", "1"), 10)
-        local stroke_width = tonumber(common.get_attr(element, "stroke-width", "1"), 10)
-        local stroke_linecap = common.get_attr(element, "stroke-linecap", "butt")
-        local stroke_linejoin = common.get_attr(element, "stroke-linejoin", "miter")
-        local stroke_miterlimit = tonumber(common.get_attr(element, "stroke-miterlimit", "4"), 10)
+    local style = common.get_attr(element, "style", "none") 
 
+    if style then
+        --print("style", style)
+        opacity = tonumber(string.match(style, 'opacity:(%d)') or 10)
+        stroke_opacity = tonumber(string.match(style, 'stroke%-opacity:(%d)'))
+        --print(string.match(style, 'stroke%-opacity:(.-)[;"]'))
+        --print("colorstr", string.match(style, 'stroke:(.-)[;"]'))
+        r, g, b, a = common.color_parse(string.match(style, 'stroke:(.-)[;"]'))
+        stroke_linecap = string.match(style, 'stroke%-linecap:(.-)[;"]') or "butt"
+        stroke_linejoin = string.match(style, 'stroke%-linejoin:(.-)[;"]') or "miter"
+        stroke_miterlimit = tonumber(string.match(style, 'stroke%-miterlimit:(.-)[;"]') or "4", 10)
+
+        stroke_width = tonumber(string.gsub(string.match(style, 'stroke%-width:(.-)[;"]') or "1",
+            "px", ""), 10)
+
+        print("opacity", opacity)
+        print("stroke_opacity", stroke_opacity)
+        print("color", r, g, b, a)
+        print("stroke-width", stroke_width)
+        print("stroke-linecap", stroke_linecap)
+        print("stroke-miterlimit", stroke_miterlimit)
+        print()
+        if r then 
+            parsed = true
+        end
+    else
+        r, g, b, a = common.color_parse(common.get_attr(element, "stroke", "none"))
+        if r then
+            opacity = tonumber(common.get_attr(element, "opacity", "1"), 10)
+            stroke_opacity = tonumber(common.get_attr(element, "stroke-opacity", "1"), 10)
+            stroke_width = tonumber(common.get_attr(element, "stroke-width", "1"), 10)
+            stroke_linecap = common.get_attr(element, "stroke-linecap", "butt")
+            stroke_linejoin = common.get_attr(element, "stroke-linejoin", "miter")
+            stroke_miterlimit = tonumber(common.get_attr(element, "stroke-miterlimit", "4"), 10)
+            parsed = true
+        end
+    end
+
+    if parsed then
         svg.graphics
             :set_stroke_paint(paint.Color(r, g, b, a * opacity * stroke_opacity))
             :set_line_width(stroke_width)

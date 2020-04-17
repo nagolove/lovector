@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ]]
 
+inspect = require "inspect"
 local lovector = require "lovector"
 
 local oldmousex = nil
@@ -78,10 +79,12 @@ function love.load()
 
     --- SVG loading demo
     -- (it just returns a "Graphics")
-    graphics[2] = lovector.SVG("demo_files/path.svg")
+    --graphics[2] = lovector.SVG("demo_files/path.svg")
 
     -- tiggie!
-    graphics[3] = lovector.SVG("demo_files/ghostscript-tiger.svg")
+    --graphics[3] = lovector.SVG("demo_files/ghostscript-tiger.svg")
+    graphics[4] = lovector.SVG("demo_files/level1_orig.svg")
+    --print("graphics[4]", inspect(graphics[4]))
 end
 
 function love.update(dt)
@@ -118,9 +121,12 @@ function love.draw()
     love.graphics.translate(-cameraX, -cameraY)
 
     -- Draw all our graphics!
-    graphics[1]:draw(0, -300)
-    graphics[2]:draw(0, 0)
-    graphics[3]:draw(800, 50, 400)
+    for k, v in pairs(graphics) do
+        v:draw()
+        --graphics[1]:draw(0, -300)
+        --graphics[2]:draw(0, 0)
+        --graphics[3]:draw(800, 50, 400)
+    end
 
     -- Get out of the camera
     love.graphics.pop()
