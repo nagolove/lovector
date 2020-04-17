@@ -357,8 +357,39 @@ function common.apply_viewbox(svg, element)
         return
     end
 
-    local width = tonumber(common.get_attr(element, "width", "1"), 10)
-    local height = tonumber(common.get_attr(element, "height", "1"), 10)
+    --local width = element:get_attribute("width", false, "1")
+    --local height = element:get_attribute("height", false, "1")
+    --print("element", inspect(element))
+    --print("W, H", width, height)
+
+    local dpi = 96
+    --local width = 4 / 2.54 * dpi
+    --local height = 4 / 2.54 * dpi
+
+    local width, unit1 = string.match(common.get_attr(element, "width", "1"), "([1234567890.]+)(.*)")
+    local height, unit2 = string.match(common.get_attr(element, "height", "1"), "([1234567890.]+)(.*)")
+
+    print("W, H", width, height)
+    print("unit", unit1, unit2)
+
+    assert(unit1 == unit2, "document units must be a same")
+    
+    if unit1 == "pt" then
+        width = width / 72.0 * dpi
+        height = height / 72.0 * dpi
+    elseif unit1 == "pc" then
+        width = width / 6.0 * dpi
+        height = height / 6.0 * dpi
+    elseif unit1 == "mm" then
+        width = width / 25.4 * dpi
+        height = height / 25.4 * dpi
+    elseif unit1 == "cm" then
+        width = width / 2.54 * dpi
+        height = height / 2.54 * dpi
+    elseif unit1 == "in" then
+        width = width * 72.0 * dpi
+        height = height * 72 * dpi
+    end
 
     -- get each value
     local next_num = view_box:gmatch("%-?[^%s,%-]+")
