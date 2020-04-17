@@ -357,20 +357,10 @@ function common.apply_viewbox(svg, element)
         return
     end
 
-    --local width = element:get_attribute("width", false, "1")
-    --local height = element:get_attribute("height", false, "1")
-    --print("element", inspect(element))
-    --print("W, H", width, height)
-
     local dpi = 96
-    --local width = 4 / 2.54 * dpi
-    --local height = 4 / 2.54 * dpi
 
     local width, unit1 = string.match(common.get_attr(element, "width", "1"), "([1234567890.]+)(.*)")
     local height, unit2 = string.match(common.get_attr(element, "height", "1"), "([1234567890.]+)(.*)")
-
-    print("W, H", width, height)
-    print("unit", unit1, unit2)
 
     assert(unit1 == unit2, "document units must be a same")
     
